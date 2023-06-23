@@ -3,7 +3,7 @@ const postsRouter = express.Router();
 
 const { requireUser } = require('./utils');
 
-const { 
+const {
   createPost,
   getAllPosts,
   updatePost,
@@ -16,21 +16,23 @@ postsRouter.get('/', async (req, res, next) => {
 
     const posts = allPosts.filter(post => {
       // the post is active, doesn't matter who it belongs to
+
       if (post.active) {
         return true;
       }
-    
+
       // the post is not active, but it belogs to the current user
       if (req.user && post.author.id === req.user.id) {
         return true;
       }
-    
+
       // none of the above are true
       return false;
     });
-  
+
     res.send({
       posts
+
     });
   } catch ({ name, message }) {
     next({ name, message });
@@ -38,19 +40,22 @@ postsRouter.get('/', async (req, res, next) => {
 });
 
 postsRouter.post('/', requireUser, async (req, res, next) => {
-  const { title, content = "" } = req.body;
+  const { title, content = "", tags = "" } = req.body;
+  const tagsArr = tags.trim().split(/\s+/);
 
-  const postData = {};
-
+  const postData = {
+    tags: tagsArr
+  };
   try {
     postData.authorId = req.user.id;
     postData.title = title;
     postData.content = content;
-
+    // postData.tags = tags;
     const post = await createPost(postData);
 
     if (post) {
       res.send(post);
+
     } else {
       next({
         name: 'PostCreationError',
@@ -98,7 +103,23 @@ postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
 });
 
 postsRouter.delete('/:postId', requireUser, async (req, res, next) => {
-  res.send({ message: 'under construction' });
+
+  try {
+    const {postId} = req.params
+
+    if (!postId){
+      
+    }
+  } catch(error){
+
+  }
+  // await postsRouter.remove((req.postId), (err) => {
+  //   if (err) {
+  //     res.status(400).send('post not deleted');
+  //   } else {
+        res.send(postId);
+    // }
+
 });
 
 module.exports = postsRouter;

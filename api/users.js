@@ -12,9 +12,13 @@ const jwt = require('jsonwebtoken');
 usersRouter.get('/', async (req, res, next) => {
   try {
     const users = await getAllUsers();
-  
+    // console.log("HEADERS")
+    // console.log(req.headers)
+    req.fubar = "elle's favorite word"
+    console.log(req.fubar)
     res.send({
-      users
+      users, 
+      fubar: req.fubar
     });
   } catch ({ name, message }) {
     next({ name, message });
